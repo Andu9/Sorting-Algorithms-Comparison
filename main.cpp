@@ -4,7 +4,117 @@
 
 std::vector<int> v;
 
+/////////////////////////////// - AVL SORT - 
 
+#include <iostream>
+
+struct Nod {
+    int val, h = 0, cnt;
+    Nod *st, *dr;
+};
+
+int n, maxim, nr;
+
+int inaltime(Nod *x) {
+    if (x != nullptr) {
+        return x->h;
+    }
+    return 0;
+}
+
+void inordine(Nod* x) {
+    if (x != nullptr) {
+        inordine(x->st);
+        std::cout << x->val << ' ';
+        inordine(x->dr);
+    }
+}
+
+Nod* nodNou (int valoare) {
+    Nod* aux = new Nod;
+    aux->val = valoare;
+    aux->st = nullptr;
+    aux->dr = nullptr;
+    aux->h = 1;
+    aux->cnt = 1;
+    return aux;
+}
+
+Nod* rotatieStanga(Nod* x) {
+    Nod *y = x->dr;
+    Nod *stangaY = y->st;
+
+    y->st = x;
+    x->dr = stangaY;
+
+    x->h = std::max(inaltime(x->st), inaltime(x->dr)) + 1;
+    y->h = std::max(inaltime(y->st), inaltime(y->dr)) + 1;
+
+    return y;
+}
+
+Nod* rotatieDreapta(Nod* x) {
+    Nod *y = x->st;
+    Nod *dreaptaY = y->dr;
+
+    y->dr = x;
+    x->st = dreaptaY;
+
+    x->h = std::max(inaltime(x->st), inaltime(x->dr)) + 1;
+    y->h = std::max(inaltime(y->st), inaltime(y->dr)) + 1;
+
+    return y;
+}
+
+Nod* inserare(Nod *root, int nr) {
+    if (root == nullptr)
+        return nodNou(nr);
+
+    if (nr < root->val) /// ramura stanga
+        root->st = inserare(root->st, nr);
+    else if (nr > root->val) /// ramura dreapta
+        root->dr = inserare(root->dr, nr);
+    else { /// element egal, marim contorul
+        root->cnt++;
+        return root;
+    }
+
+    root->h = std::max(inaltime(root->st), inaltime(root->dr)) + 1;
+    int bf = inaltime(root->st) - inaltime(root->dr); /// Balance Factor
+
+    if (bf > 1) { /// Balansat la stanga
+        if (nr < root->st->val) /// Inserare la stanga
+            return rotatieDreapta(root);
+        else if (nr > root->st->val) { /// Inserare la dreapta
+            root->st = rotatieStanga(root->st);
+            return rotatieStanga(root);
+        }
+    }
+    else if (bf < -1) { /// Balansat la dreapta
+        if (nr > root->dr->val) /// Inserare la dreapta
+            return rotatieStanga(root);
+        else if (nr < root->dr->val) {
+            root->dr = rotatieDreapta(root->dr);
+            return rotatieStanga(root);
+        }
+    }
+    return root;
+}
+
+int main() {
+    std::cin >> n >> maxim;
+    Nod* root = nullptr;
+
+    for (int i = 1; i <= n; ++i) {
+        std::cin >> nr;
+        root = inserare(root, nr);
+    }
+
+    inordine(root);
+    return 0;
+}
+
+////////////////////////////////////// - AVL SORT -
 
 void ShellSort() {
     int n = v.size() - 1;
