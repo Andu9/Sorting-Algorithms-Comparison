@@ -1,6 +1,9 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <string>
+#include <ctime>
+#include <chrono>
 
 std::vector<int> v;
 
@@ -258,28 +261,35 @@ bool CheckSorted() {
 }
 
 int main() {
-    std::ifstream fin("input.in");
-    int testCases; fin >> testCases;
-    for (int i = 1; i <= testCases; i += 1) {
-        int n, Max;
-        fin >> n >> Max, v.resize(n + 1);
-        for (int i = 1; i <= n; i += 1) {
-            fin >> v[i];
+    for (int k = 0; k < 100; ++k) {
+        std::ifstream fin("./Teste n = 1000, Max = 1000000/input" + std::to_string(k + 1) + ".in");
+        std::ofstream fout("Merge Sort Results/timp" + std::to_string(k + 1) + ".out");
+        int testCases; fin >> testCases;
+        std::cout << "Fisierul " << k + 1 << '\n';
+        for (int i = 1; i <= testCases; i += 1) {
+            int n, Max;
+            fin >> n >> Max, v.resize(n + 1);
+            for (int i = 1; i <= n; i += 1) {
+                fin >> v[i];
+            }
+
+            auto start = std::chrono::steady_clock::now();
+
+            MergeSort(1, n);
+
+            auto finish = std::chrono::steady_clock::now();
+
+            auto interval = std::chrono::duration_cast<std::chrono::nanoseconds>(finish - start);
+
+            bool checked = CheckSorted();
+            if (checked == true) {
+                fout << "Test #" << i << ": " << interval.count() << '\n';
+            } else {
+                fout << "Test #" << i << " failed\n";
+            }
         }
-
-        auto start = std::chrono::high_resolution_clock::now();
-
-        /// Plasam sortarea aici
-
-        auto finish = std::chrono::high_resolution_clock::now();
-        auto interval = std::chrono::duration_cast<std::chrono::nanoseconds>(finish - start);
-
-        bool checked = CheckSorted();
-        if (checked == true) {
-            fout << "Test #" << i << ": " << interval.count() << '\n';
-        } else {
-            fout << "Test #" << i << " failed\n";
-        }
+        fout.close();
+        fin.close();
     }
     return 0;
 }
