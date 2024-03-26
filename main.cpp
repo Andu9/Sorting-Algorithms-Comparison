@@ -25,7 +25,9 @@ int inaltime(Nod *x) {
 void inordine(Nod* x) {
     if (x != nullptr) {
         inordine(x->st);
-        std::cout << x->val << ' ';
+        for (int i = 1; i <= x->cnt; ++i) {
+            std::cout << x->val << ' ';
+        }
         inordine(x->dr);
     }
 }
@@ -85,15 +87,15 @@ Nod* inserare(Nod *root, int nr) {
     if (bf > 1) { /// Balansat la stanga
         if (nr < root->st->val) /// Inserare la stanga
             return rotatieDreapta(root);
-        else if (nr > root->st->val) { /// Inserare la dreapta
+        else { /// Inserare la dreapta
             root->st = rotatieStanga(root->st);
-            return rotatieStanga(root);
+            return rotatieDreapta(root);
         }
     }
     else if (bf < -1) { /// Balansat la dreapta
         if (nr > root->dr->val) /// Inserare la dreapta
             return rotatieStanga(root);
-        else if (nr < root->dr->val) {
+        else {
             root->dr = rotatieDreapta(root->dr);
             return rotatieStanga(root);
         }
@@ -102,7 +104,7 @@ Nod* inserare(Nod *root, int nr) {
 }
 
 int main() {
-    std::cin >> n >> maxim;
+    std::cin >> n;
     Nod* root = nullptr;
 
     for (int i = 1; i <= n; ++i) {
@@ -113,7 +115,6 @@ int main() {
     inordine(root);
     return 0;
 }
-
 ////////////////////////////////////// - AVL SORT -
 
 void ShellSort() {
