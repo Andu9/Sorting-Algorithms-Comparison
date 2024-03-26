@@ -4,16 +4,10 @@
 
 std::vector<int> v;
 
-/////////////////////////////// - AVL SORT - 
-
-#include <iostream>
-
 struct Nod {
     int val, h = 0, cnt;
     Nod *st, *dr;
 };
-
-int n, maxim, nr;
 
 int inaltime(Nod *x) {
     if (x != nullptr) {
@@ -25,14 +19,15 @@ int inaltime(Nod *x) {
 void inordine(Nod* x) {
     if (x != nullptr) {
         inordine(x->st);
-        for (int i = 1; i <= x->cnt; ++i) {
-            std::cout << x->val << ' ';
+        while (x->cnt > 0) {
+            v.emplace_back(x->val);
+            x->cnt -= 1;
         }
         inordine(x->dr);
     }
 }
 
-Nod* nodNou (int valoare) {
+Nod* nodNou(int valoare) {
     Nod* aux = new Nod;
     aux->val = valoare;
     aux->st = nullptr;
@@ -103,19 +98,16 @@ Nod* inserare(Nod *root, int nr) {
     return root;
 }
 
-int main() {
-    std::cin >> n;
-    Nod* root = nullptr;
-
-    for (int i = 1; i <= n; ++i) {
-        std::cin >> nr;
-        root = inserare(root, nr);
+void AVLSort() {
+    Nod * root = nullptr;
+    int n = v.size() - 1;
+    for (int i = 1; i <= n; i += 1) {
+        root = inserare(root, v[i]);
     }
-
+    v.clear(), v.emplace_back(0);
     inordine(root);
-    return 0;
 }
-////////////////////////////////////// - AVL SORT -
+
 
 void ShellSort() {
     int n = v.size() - 1;
