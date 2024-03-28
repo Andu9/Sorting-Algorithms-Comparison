@@ -8,19 +8,20 @@
 int main() {
     std::random_device rd;  // Obtain a random number from hardware
     std::mt19937 gen(rd()); // Seed the generator
-    std::uniform_int_distribution<int> dis(INT_MIN, INT_MAX);
+    std::uniform_int_distribution<int> dis(0, 1000);
 
-    const int noFiles = 100;
+    const int noFiles = 1;
     for (int k = 0; k < noFiles; k += 1) {
-        std::ofstream fout("Teste n = 1000, Max = 1000000000/input" + std::to_string(k + 1) + ".in");
+        std::ofstream fout("Teste n = 10^9, Max = 10^3/input" + std::to_string(k + 1) + ".in");
 
 
         std::cout << "Fisier " << k + 1 << '\n';
-        const int testCases = 10000;
+        const int testCases = 5;
 
         fout << testCases << '\n';
         for (int j = 0; j < testCases; j += 1) {
-            const int n = 1000;
+            std::cout << "Testul " << j + 1 << '\n';
+            const int n = 1000000000;
             int Max = INT_MIN;
             std::vector<int> v(n);
             for (int i = 0; i < n; i += 1) {
