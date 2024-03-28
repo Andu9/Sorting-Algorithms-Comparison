@@ -4,8 +4,9 @@
 #include <string>
 #include <ctime>
 #include <chrono>
+#include <algorithm>
 
-std::vector<int> v;
+std::vector<int> v, Aux;
 
 struct Nod {
     int val, h = 0, cnt;
@@ -116,11 +117,11 @@ void ShellSort() {
     int n = v.size() - 1;
     for (int gap = (n >> 1); gap > 0; gap >>= 1) {
         for (int i = gap + 1; i <= n; i += 1) {
-            int aux = v[i], j = i;
-            while (j > gap && v[j - gap] > v[i]) {
-                v[j] = v[j - gap], j = j - gap;
-            }
-            v[j] = aux;
+            int aux = v[i], j;
+            for (j = i - gap; j > 0 && v[j] > aux; j -= gap)
+                v[j + gap] = v[j];
+
+            v[j + gap] = aux;
         }
     }
 }
@@ -260,36 +261,186 @@ bool CheckSorted() {
     return true;
 }
 
+void resetVector(int n) {
+    for (int i = 1; i <= n; ++i) {
+        v[i] = Aux[i];
+    }
+}
+
+int ok = 3;
+
 int main() {
-    for (int k = 0; k < 100; ++k) {
-        std::ifstream fin("./Teste n = 1000, Max = 1000000/input" + std::to_string(k + 1) + ".in");
-        std::ofstream fout("Merge Sort Results/timp" + std::to_string(k + 1) + ".out");
+    std::string ceva = "Pentru AVL";
+    std::string intrare = "Speciale";
+    std::string iesire1 = "Sortari/AVL Sort Results";
+    std::string iesire2 = "Sortari/Counting Sort Results";
+    std::string iesire3 = "Sortari/Merge Sort Results";
+    std::string iesire4 = "Sortari/Quick Sort Results";
+    std::string iesire5 = "Sortari/Radix Sort Results";
+    std::string iesire6 = "Sortari/Shell Sort Results";
+    std::string iesire7 = "Sortari/STL Sort Results";
+
+    std::string fail = "FAIL ------------------------------------------\n";
+    for (int k = 1; k <= 1; ++k) {
+
+        std::ifstream fin(intrare + "Pentru AVL");
+        std::ofstream fout1(iesire1 + "/" + intrare + "/" + ceva + "/timp.out");
+        std::ofstream fout2(iesire2 + "/" + intrare + "/" + ceva + "/timp.out");
+        std::ofstream fout3(iesire3 + "/" + intrare + "/" + ceva + "/timp.out");
+        std::ofstream fout4(iesire4 + "/" + intrare + "/" + ceva + "/timp.out");
+        std::ofstream fout5(iesire5 + "/" + intrare + "/" + ceva + "/timp.out");
+        std::ofstream fout6(iesire6 + "/" + intrare + "/" + ceva + "/timp.out");
+        std::ofstream fout7(iesire7 + "/" + intrare + "/" + ceva + "/timp.out");
+
+
         int testCases; fin >> testCases;
-        std::cout << "Fisierul " << k + 1 << '\n';
-        for (int i = 1; i <= testCases; i += 1) {
+        //std::cout << "Fisierul " << k << '\n';
+        for (int i = 1; i <= 10; i += 1) {
+            std::cout << "Testul " << i << '\n';
             int n, Max;
             fin >> n >> Max, v.resize(n + 1);
+            Aux.resize(n + 1);
+            std::cout << "Depunere in vector...\n";
             for (int i = 1; i <= n; i += 1) {
-                fin >> v[i];
+                fin >> Aux[i];
             }
 
+            /// 1 AVL
+            resetVector(n);
+            std::cout << "AVL SORT start\n";
             auto start = std::chrono::steady_clock::now();
-
-            MergeSort(1, n);
-
+            AVLSort();
             auto finish = std::chrono::steady_clock::now();
 
             auto interval = std::chrono::duration_cast<std::chrono::nanoseconds>(finish - start);
 
             bool checked = CheckSorted();
             if (checked == true) {
-                fout << "Test #" << i << ": " << interval.count() << '\n';
+                fout1 << interval.count() << '\n';
+                std::cout << "AVL SORT end\n";
             } else {
-                fout << "Test #" << i << " failed\n";
+                fout1 << "Test #" << i << " failed\n";
+                std::cout << fail;
             }
+
+            /// 2 Counting Sort
+            resetVector(n);
+            std::cout << "COUNTING SORT start\n";
+            start = std::chrono::steady_clock::now();
+            CountingSort();
+            finish = std::chrono::steady_clock::now();
+
+            interval = std::chrono::duration_cast<std::chrono::nanoseconds>(finish - start);
+
+            checked = CheckSorted();
+            if (checked == true) {
+                fout2 << interval.count() << '\n';
+                std::cout << "COUNGING SORT end\n";
+            } else {
+                fout2 << "Test #" << i << " failed\n";
+                std::cout << fail;
+            }
+
+            /// 3 MERGE sort
+            resetVector(n);
+            std::cout << "MERGE SORT start\n";
+            start = std::chrono::steady_clock::now();
+            MergeSort(1, n);
+            finish = std::chrono::steady_clock::now();
+
+            interval = std::chrono::duration_cast<std::chrono::nanoseconds>(finish - start);
+
+            checked = CheckSorted();
+            if (checked == true) {
+                fout3 << interval.count() << '\n';
+                std::cout << "MERGE SORT end\n";
+            } else {
+                fout3 << "Test #" << i << " failed\n";
+                std::cout << fail;
+            }
+
+
+            // 4 Quick
+            resetVector(n);
+            std::cout << "QUICK SORT start\n";
+            start = std::chrono::steady_clock::now();
+            QuickSort(1, n);
+            finish = std::chrono::steady_clock::now();
+
+            interval = std::chrono::duration_cast<std::chrono::nanoseconds>(finish - start);
+
+            checked = CheckSorted();
+            if (checked == true) {
+                fout4 << interval.count() << '\n';
+                std::cout << "QUICK SORT end\n";
+            } else {
+                fout4 << "Test #" << i << " failed\n";
+                std::cout << fail;
+            }
+
+
+            ///5 Radix Sort
+            resetVector(n);
+            std::cout << "RADIX SORT start\n";
+            start = std::chrono::steady_clock::now();
+            RadixSort();
+            finish = std::chrono::steady_clock::now();
+
+            interval = std::chrono::duration_cast<std::chrono::nanoseconds>(finish - start);
+
+            checked = CheckSorted();
+            if (checked == true) {
+                fout5 << interval.count() << '\n';
+                std::cout << "RADIX SORT end\n";
+            } else {
+                fout5 << "Test #" << i << " failed\n";
+                std::cout << fail;
+            }
+
+            /// 6 SHELL
+            resetVector(n);
+            std::cout << "SHELL SORT start\n";
+            start = std::chrono::steady_clock::now();
+            ShellSort();
+            finish = std::chrono::steady_clock::now();
+
+            interval = std::chrono::duration_cast<std::chrono::nanoseconds>(finish - start);
+
+            checked = CheckSorted();
+            if (checked == true) {
+                fout6 << interval.count() << '\n';
+                std::cout << "SHELL SORT end\n";
+            } else {
+                fout6 << "Test #" << i << " failed\n";
+                std::cout << fail;
+            }
+
+            /// STD SORT
+            resetVector(n);
+            std::cout << "STD SORT start\n";
+            start = std::chrono::steady_clock::now();
+            std::sort(v.begin() + 1, v.end());
+            finish = std::chrono::steady_clock::now();
+
+            interval = std::chrono::duration_cast<std::chrono::nanoseconds>(finish - start);
+
+            checked = CheckSorted();
+            if (checked == true) {
+                fout7 << interval.count() << '\n';
+                std::cout << "STL SORT end\n";
+            } else {
+                fout7 << "Test #" << i << " failed\n";
+                std::cout << fail;
+            }
+            std::cout << '\n';
         }
-        fout.close();
         fin.close();
+        fout1.close();
+        fout2.close();
+        fout3.close();
+        fout4.close();
+        fout5.close();
+        fout6.close();
     }
     return 0;
 }
