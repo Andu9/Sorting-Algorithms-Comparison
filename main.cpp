@@ -153,6 +153,71 @@ void QuickSort(int low, int high)
     }
 }
 
+
+
+
+
+
+
+
+
+// Function to find median of 5 elements
+int medianOfFive( int a, int b, int c, int d, int e) {
+    std::vector<int> temp = {v[a],v[b],v[c], v[d], v[e]};
+    std::sort(temp.begin(), temp.end());
+    return temp[2]; // Median of the sorted array
+}
+
+
+
+
+
+
+int partition2( int low, int high) {
+    int n = high - low + 1;
+
+    int m1 = low;
+    int m2 = low + n / 4;
+    int m3 = low + n / 2;
+    int m4 = low + 3 * n / 4;
+    int m5 = high;
+
+    int pivot = medianOfFive(m1, m2, m3, m4, m5);
+
+    int pivotIndex;
+    for (pivotIndex = low; pivotIndex <= high; pivotIndex++) {
+        if (v[pivotIndex] == pivot)
+            break;
+    }
+    std::swap(v[pivotIndex], v[high]);
+
+    int i = low - 1;
+    for (int j = low; j < high; j++) {
+        if (v[j] < pivot) {
+            i++;
+            std::swap(v[i], v[j]);
+        }
+    }
+    std::swap(v[i + 1], v[high]);
+    return i + 1;
+}
+
+
+void quickSort2( int low, int high) {
+    if (low < high) {
+        int pi = partition2(low, high);
+        quickSort2(low, pi - 1);
+        quickSort2( pi + 1, high);
+    }
+}
+
+
+
+
+
+
+
+
 void Merge(int left, int middle, int right) {
     std::vector<int> aux(right - left + 2);
 
